@@ -1,6 +1,6 @@
 let jwt = require( 'jsonwebtoken' );
 const secret = process.env.JWT_SECRET;
-var [loginUser] = require('../controllers/users');
+var [a,b,loginUser] = require('../controllers/users');
 // Clase encargada de la creación del token
 class HandlerGenerator {
 
@@ -14,7 +14,13 @@ class HandlerGenerator {
     // Si se especifico un usuario y contraseña, proceda con la validación
     // de lo contrario, un mensaje de error es retornado
     if( username && password ) {
-        const validate = await loginUser(username,password);
+        const validate = await loginUser(username,password).then((a)=>{
+
+
+
+            console.log("aaaa"+a)
+        });
+        console.log("vv"+validate)
       // Si los usuarios y las contraseñas coinciden, proceda con la generación del token
       // de lo contrario, un mensaje de error es retornado
       if( validate ) {

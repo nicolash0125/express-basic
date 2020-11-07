@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 async function getUsers() {
+    console.log("*****")
   const client = await mongoUtils.conn();
   const users = await client
     .db(dataBase)
@@ -14,21 +15,33 @@ async function getUsers() {
   return users;
 }
 
-
 async function loginUser(user,password) {
+    validate = await false;
+    console.log("-----")
     const client = await mongoUtils.conn();
     const users = await client
       .db(dataBase)
       .collection(COLLECTION_NAME)
       .find({"usuario":user})
-      .toArray()
-      .finally(() => client.close());
-    validate = false;
-    console.log(users)
-    bcrypt.compare(password, users[0]["pass"], function(err, result) {
+      .toArray().then((user)=>{
+        client.close();
+        bcrypt.compare(password, user[0].pass, function(err, result) {
+            validate = result
+            console.log(result)
+            return result
+        });
+      })
+      .finally(() =>{
+        
+          client.close();
+    } 
+    );
+    await bcrypt.compare(password, users[0].pass, function(err, result) {
         validate = result
+        console.log(result)
+        
     });
-    return validate;
+    return await validate
   }
 
 
@@ -46,4 +59,4 @@ function insertUser(user) {
   });
 }
 
-module.exports = [getUsers, insertUser];
+module.exports = [getUsers, insertUser, loginUser];
