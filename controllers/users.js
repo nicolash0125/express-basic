@@ -15,34 +15,20 @@ async function getUsers() {
   return users;
 }
 
-async function loginUser(user,password) {
-    validate = await false;
-    console.log("-----")
+async function getUser(user,password) {
     const client = await mongoUtils.conn();
     const users = await client
       .db(dataBase)
       .collection(COLLECTION_NAME)
       .find({"usuario":user})
-      .toArray().then((user)=>{
-        client.close();
-        bcrypt.compare(password, user[0].pass, function(err, result) {
-            validate = result
-            console.log(result)
-            return result
-        });
-      })
-      .finally(() =>{
-        
-          client.close();
-    } 
-    );
-    await bcrypt.compare(password, users[0].pass, function(err, result) {
-        validate = result
-        console.log(result)
-        
-    });
-    return await validate
+      .toArray()
+      .finally(() => client.close());
+    return users[0] 
   }
+  
+function validate(userO,password){
+    return bcrypt.compare(password, userO.pass)
+ }
 
 
 function insertUser(user) {
@@ -59,4 +45,4 @@ function insertUser(user) {
   });
 }
 
-module.exports = [getUsers, insertUser, loginUser];
+module.exports = [getUsers, insertUser, getUser, validate];
