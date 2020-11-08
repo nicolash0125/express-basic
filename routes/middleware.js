@@ -40,7 +40,24 @@ let checkToken = ( req, res, next ) => {
   }
 
 };
-
+function rol( token, resource){
+    
+    jwt.verify( token, secret, (err, decoded ) => {
+      let role = decoded.role;
+      
+      if ( (resource == 'usuarios'|| resource == 'productos') && role == 'admin') {
+        return true;
+      }
+      if ( (resource == 'productos') && role == 'sup') {
+        return true;
+      }
+      else {
+        return false;
+      }
+  
+    });
+  }
 module.exports = {
-  checkToken: checkToken
+  checkToken: checkToken,
+  checkRol:rol
 }

@@ -23,7 +23,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//router.get('/', middleware.checkToken, HandlerGenerator.index);
+app.get('/', middleware.checkToken, indexRouter);
+app.get('/check', middleware.checkToken, HandlerGenerator.index);
 app.post( '/login', HandlerGenerator.login);
 app.use('/users', usersRouter);
 app.use('/products', productsRouter);
